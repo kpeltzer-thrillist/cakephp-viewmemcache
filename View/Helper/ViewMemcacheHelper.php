@@ -27,10 +27,6 @@ App::uses('AppHelper', 'View/Helper');
  * ```
  * 
  * You can also disable storing view to memcache by setting Configure::write('ViewMemcache.disable',true);
- * 
- * @author rynop.com
- * 
- * Based on https://github.com/salgo/cakephp-viewmemcache by salgo
  *
  */
 class ViewMemcacheHelper extends AppHelper {
@@ -71,11 +67,12 @@ class ViewMemcacheHelper extends AppHelper {
 
 				if ( $this->gzipContent && empty($this->_View->viewVars['viewMemcacheDisableGzip']) ) {
 					//CakeLog::write('debug', "ViewMemCache: gzipping ".$this->request->here."\n\n".var_export($this->request,true)."\n\n".var_export($_SERVER,true));
-					@Cache::write($this->request->here, gzencode($this->_View->output . $this->cacheFooter, $this->compressLevel), 'view_memcache');
+          @Cache::write(array('key'=>$this->request->here, 'table'=>'url'), array('value'=>gzencode($this->_View->output . $this->cacheFooter, $this->compressLevel), 'type' => 'html'), 'view_memcache');
 				}
 				else {
 					//CakeLog::write('debug', "ViewMemCache: NOT gzipping ");
-					@Cache::write($this->request->here, $this->_View->output . $this->cacheFooter, 'view_memcache');
+          LogError('Caching');
+					@Cache::write(array('key'=>$this->request->here, 'table'=>'url'), array('value'=>$this->_View->output . $this->cacheFooter, 'type' => 'html'), 'view_memcache');
 				}
 			}
 		} catch (Exception $e) {
